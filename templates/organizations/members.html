@@ -1,0 +1,125 @@
+
+{% extends "organizations/base.html" %}
+
+{% block title %}People & Access | ClassRoom{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">IDENTITY & ACCESS</p>
+        <h1>People & Access</h1>
+        <p class="muted">
+            Assign existing user accounts to organization roles
+            and branches.
+        </p>
+    </div>
+</section>
+
+<div class="panel form-panel">
+    <h2>Grant access</h2>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {{ form.non_field_errors }}
+
+        {% for field in form %}
+            <div class="form-field">
+                <label for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% for error in field.errors %}
+                    <small class="field-error">
+                        {{ error }}
+                    </small>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <button class="btn btn-primary" type="submit">
+            Assign Access
+        </button>
+    </form>
+
+    <p class="muted small">
+        Accounts must already exist. Email invitations
+        will be added in Sprint 2B.
+    </p>
+</div>
+
+<section class="section-heading">
+    <h2>Organization Memberships</h2>
+</section>
+
+<div class="panel table-panel">
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for membership in memberships %}
+                    <tr>
+                        <td>{{ membership.user.username }}</td>
+                        <td>{{ membership.get_role_display }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="2">No members found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<section class="section-heading">
+    <h2>Active Branch Assignments</h2>
+</section>
+
+<div class="panel table-panel">
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Branch</th>
+                    <th>Role</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for assignment in assignments %}
+                    <tr>
+                        <td>{{ assignment.user.username }}</td>
+                        <td>{{ assignment.branch.name }}</td>
+                        <td>{{ assignment.get_role_display }}</td>
+                        <td>
+                            <form method="post"
+                                  action="{% url 'workspace-assignment-revoke' organization.slug assignment.id %}">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="btn-danger">
+                                    Revoke
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4">
+                            No active branch assignments.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

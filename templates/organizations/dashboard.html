@@ -1,0 +1,93 @@
+
+{% extends "organizations/base.html" %}
+
+{% block title %}Dashboard | ClassRoom{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">ORGANIZATION OVERVIEW</p>
+        <h1>{{ organization.name }}</h1>
+        <p class="muted">
+            Branches, access and organization operations.
+        </p>
+    </div>
+
+    {% if is_org_admin %}
+        <a class="btn btn-primary"
+           href="{% url 'workspace-branch-create' organization.slug %}">
+            + Create Branch
+        </a>
+    {% endif %}
+</section>
+
+<div class="stats-grid">
+    <div class="panel stat-panel">
+        <p class="muted">Visible branches</p>
+        <strong class="stat-number">{{ branch_count }}</strong>
+    </div>
+
+    {% if is_org_admin %}
+        <div class="panel stat-panel">
+            <p class="muted">Active members</p>
+            <strong class="stat-number">{{ member_count }}</strong>
+        </div>
+    {% endif %}
+</div>
+
+<section class="section-heading">
+    <div>
+        <p class="eyebrow">BRANCH DIRECTORY</p>
+        <h2>Branches</h2>
+    </div>
+</section>
+
+<div class="panel table-panel">
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr>
+                    <th>Branch</th>
+                    <th>Code</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    {% if is_org_admin %}
+                        <th>Action</th>
+                    {% endif %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for branch in branches %}
+                    <tr>
+                        <td><strong>{{ branch.name }}</strong></td>
+                        <td>{{ branch.code }}</td>
+                        <td>{{ branch.city|default:"—" }}</td>
+                        <td>
+                            {% if branch.is_active %}
+                                <span class="status active">Active</span>
+                            {% else %}
+                                <span class="status inactive">Inactive</span>
+                            {% endif %}
+                        </td>
+
+                        {% if is_org_admin %}
+                            <td>
+                                <a href="{% url 'workspace-branch-edit' organization.slug branch.id %}">
+                                    Edit
+                                </a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">
+                            No branches available.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

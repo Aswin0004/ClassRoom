@@ -1,0 +1,92 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}ClassRoom{% endblock %}</title>
+
+    <link rel="stylesheet"
+          href="{% static 'organizations/workspace.css' %}">
+</head>
+
+<body>
+    <div class="app-layout">
+
+        <aside class="sidebar">
+            <a class="brand" href="{% url 'workspace-home' %}">
+                <span class="brand-icon">C</span>
+                <span>ClassRoom<span class="accent">.</span></span>
+            </a>
+
+            <div class="nav-label">WORKSPACE</div>
+
+            <nav aria-label="Main navigation">
+                <a href="{% url 'workspace-home' %}">
+                    Organizations
+                </a>
+
+                {% if organization %}
+                    <a href="{% url 'workspace-dashboard' organization.slug %}">
+                        Overview
+                    </a>
+
+                    {% if is_org_admin %}
+                        <a href="{% url 'workspace-branch-create' organization.slug %}">
+                            Add Branch
+                        </a>
+
+                        <a href="{% url 'workspace-members' organization.slug %}">
+                            People & Access
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </nav>
+
+            <div class="sidebar-footer">
+                <span class="muted">Signed in as</span>
+                <strong>{{ request.user.username }}</strong>
+
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button class="logout-btn" type="submit">
+                        Sign out
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <span class="muted">CLASSROOM / MANAGEMENT</span>
+                    <div class="topbar-title">
+                        {% if organization %}
+                            {{ organization.name }}
+                        {% else %}
+                            Workspace
+                        {% endif %}
+                    </div>
+                </div>
+
+                <span class="user-pill">
+                    {{ request.user.username }}
+                </span>
+            </header>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="notice" role="status">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

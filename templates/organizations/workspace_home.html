@@ -1,0 +1,41 @@
+
+{% extends "organizations/base.html" %}
+
+{% block title %}Organizations | ClassRoom{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">YOUR WORKSPACES</p>
+        <h1>Select an organization</h1>
+        <p class="muted">
+            Access the organizations assigned to your account.
+        </p>
+    </div>
+</section>
+
+<div class="card-grid">
+    {% for item in organizations %}
+        <a class="panel organization-link"
+           href="{% url 'workspace-dashboard' item.slug %}">
+
+            <div class="org-avatar">
+                {{ item.name|first|upper }}
+            </div>
+
+            <h2>{{ item.name }}</h2>
+            <p class="muted">
+                Open organization workspace
+            </p>
+        </a>
+    {% empty %}
+        <div class="panel">
+            <h2>No organizations available</h2>
+            <p class="muted">
+                Your account has not been assigned
+                to an active organization.
+            </p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

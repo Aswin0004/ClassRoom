@@ -1,0 +1,63 @@
+
+{% extends "organizations/base.html" %}
+
+{% block title %}Manage Branch | ClassRoom{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">BRANCH MANAGEMENT</p>
+
+        {% if editing %}
+            <h1>Edit Branch</h1>
+        {% else %}
+            <h1>Create Branch</h1>
+        {% endif %}
+
+        <p class="muted">
+            Changes are scoped to {{ organization.name }}.
+        </p>
+    </div>
+</section>
+
+<div class="panel form-panel">
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {{ form.non_field_errors }}
+
+        {% for field in form %}
+            <div class="form-field">
+                <label for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.help_text %}
+                    <small class="muted">
+                        {{ field.help_text }}
+                    </small>
+                {% endif %}
+
+                {% for error in field.errors %}
+                    <small class="field-error">
+                        {{ error }}
+                    </small>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <div class="form-actions">
+            <a class="btn btn-secondary"
+               href="{% url 'workspace-dashboard' organization.slug %}">
+                Cancel
+            </a>
+
+            <button class="btn btn-primary" type="submit">
+                Save Branch
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
